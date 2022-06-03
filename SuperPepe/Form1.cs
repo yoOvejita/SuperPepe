@@ -32,11 +32,18 @@ namespace SuperPepe
             lblCompilado.Text = destino;
             compilador = null;
             compilador = new PCC();
+            //cargando en richTectBox el compilado
+            txtSLM.Text = File.ReadAllText(destino);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-
+            //"C:\miCarpeta\app.exe C:\Desktop\prog.slm"
+            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo();
+            psi.Arguments = destino;
+            psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+            psi.FileName = @"C:\Users\rusokverse\source\repos\EjecutorSuperPepe\EjecutorSuperPepe\bin\Debug\netcoreapp3.1\EjecutorSuperPepe.exe";
+            System.Diagnostics.Process.Start(psi);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -47,7 +54,29 @@ namespace SuperPepe
                 origen = openFileDialog1.FileName; // "C:\progs\programitA.pp"
                 compilador.recibeTransformaArchivo(origen);
                 lblCodigo.Text = origen;
+
+                //cargando en el rich text box: tctContenido
+                txtContenido.Text = File.ReadAllText(origen);
+                colorear();
             }
+        }
+
+        private void colorear()
+        {
+            //La palabra a identificar: input
+            string palabra = "input";
+            List<int> indices = new List<int>();
+            for (int i = 0; i < txtContenido.Text.Length; i++)
+                if (txtContenido.Text.IndexOf(palabra, i) != -1)
+                    indices.Add(txtContenido.Text.IndexOf(palabra, i));
+            for(int i = 0; i < indices.Count; i++)
+            {
+                txtContenido.Select(indices.ElementAt(i), palabra.Length);
+                txtContenido.SelectionColor = Color.Blue;
+                indices.RemoveAt(i);
+            }
+            txtContenido.Select(txtContenido.Text.Length, 0);
+            txtContenido.SelectionColor = Color.Black;
         }
     }
 }
